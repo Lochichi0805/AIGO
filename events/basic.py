@@ -16,23 +16,13 @@ def about_us_event(event):
     ]
 
     # 文字回覆
-    text_message = TextSendMessage(text ='''
-
-                                   $ 鳳翊洋行 $
-
-                                   歡迎使用鳳翊洋行官方聊天機器人
-
-                                   本店販售各式菸酒，威士忌、紅酒、高粱、清酒、啤酒等。 
-                                   
-                                   營業時間皆有提供外送服務及全台宅配服務
-                                   
-                                   本店付款方式可使用現金、刷卡、台灣pay、Line pay
-                                   
-                                   歡迎使用更多功能了解更多資訊，謝謝！ 
-                                   
-                                   《未滿18歲禁止購買菸酒類商品》
-
-                                    ''', emojis = emoji)
+    text_message = TextSendMessage(text ='''$ 鳳翊洋行 $
+歡迎使用鳳翊洋行官方聊天機器人
+本店販售各式菸酒，威士忌、紅酒、高粱、清酒、啤酒等。                                 
+營業時間皆有提供外送服務及全台宅配服務
+本店付款方式可使用現金、刷卡、台灣pay、Line pay
+歡迎使用更多功能了解更多資訊，謝謝！ 
+《未滿18歲禁止購買菸酒類商品》''', emojis=emoji)
 
     # 貼圖回覆
     sticker_message = StickerSendMessage(
