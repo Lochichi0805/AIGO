@@ -6,8 +6,8 @@ from line_bot_api import *
 app = Flask(__name__)
 
 # callback ： 串接手機及程式
-@app.route("/callback", method=['POST'])  # GET ：執行網頁時，參數會直接放在網址端
-def callback():                           # POST：較有隱私，傳送參數不會放在網址端，網頁轉跳網址不變
+@app.route("/callback", methods=['POST'])  # GET ：執行網頁時，參數會直接放在網址端
+def callback():                            # POST：較有隱私，傳送參數不會放在網址端，網頁轉跳網址不變
     # get X-Line-Signature header value
     signature = request.headers["X-Line_Signature"]
 
