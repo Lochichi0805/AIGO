@@ -25,12 +25,12 @@ def about_us_event(event):
             "emojiId": "075"
         },
         {
-            "index": 90,
+            "index": 107,
             "productId": "5ac21a18040ab15980c9b43e",
             "emojiId": "048"
         },
         {
-            "index": 94,
+            "index": 111,
             "productId": "5ac21a18040ab15980c9b43e",
             "emojiId": "046"
         }
