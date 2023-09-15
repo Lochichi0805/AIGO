@@ -1,6 +1,7 @@
 from flask import Flask, request, abort
 
 from events.basic import *
+from events.service import *
 from line_bot_api import *
 
 app = Flask(__name__)
@@ -36,6 +37,10 @@ def handle_message(event):
 
     elif message_text == "@營業據點":
         location_event(event)
+
+    elif message_text == '@預約服務':
+        service_category_event(event)
+
 
 # 解封鎖
 @handler.add(FollowEvent)
