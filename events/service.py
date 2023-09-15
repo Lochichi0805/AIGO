@@ -7,7 +7,7 @@ from urllib.parse import parse_qsl
 services = {
     1: {
         'category': '婚禮',
-        'img_url': 'https://imgur.com/BvonVPh',
+        'img_url': 'https://i.imgur.com/BvonVPh.jpg',
         'title': '紅酒',
         'duration': 'Red Wine',
         'description': '這個愛的時刻，讓紅酒成為您們的杯中驚喜，見證您們的愛情故事。',
@@ -16,7 +16,7 @@ services = {
     },
     2: {
         'category': '婚禮',
-        'img_url': 'https://imgur.com/2w59MIm',
+        'img_url': 'https://i.imgur.com/2w59MIm.jpg',
         'title': '香檳/氣泡酒',
         'duration': 'Champagne/Sparkling wine',
         'description': '香檳/氣泡酒不僅是婚禮上的一種美味飲品，更是一種象徵愛情和慶祝的文化符號。',
@@ -25,7 +25,7 @@ services = {
     },
     3: {
         'category': '大型活動',
-        'img_url': 'https://imgur.com/jNkQKBt',
+        'img_url': 'https://i.imgur.com/snyGO0G.jpg',
         'title': '威士忌',
         'duration': 'Whisky',
         'description': '威士忌是一種充滿歷史和文化的烈酒，具有豐富的風味和多樣性，象徵著品味和品質的飲品。',
@@ -34,10 +34,10 @@ services = {
     },
     4: {
         'category': '大型活動',
-        'img_url': 'https://imgur.com/BvonVPh',
-        'title': '紅酒',
-        'duration': 'Red Wine',
-        'description': '紅酒，這經典的葡萄酒，彷彿是時光的藝術品。它以深邃的紅色和令人陶醉的風味，帶您踏上一場美味的旅程。',
+        'img_url': 'https://i.imgur.com/2w59MIm.jpg',
+        'title': '香檳/氣泡酒',
+        'duration': 'Champagne/Sparkling wine',
+        'description': '香檳和氣泡酒代表了葡萄酒的精華，它們擁有引人入勝的氣泡、多樣的風味和無盡的慶祝潛力。',
         'price': 0000,
         'post_url': 'https://linecorp.com'
     }
