@@ -41,6 +41,20 @@ def handle_message(event):
     elif message_text == '@預訂服務':
         service_category_event(event)
 
+#接收postback的訊息
+#parse_qsl解析data中的資料
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    #把傳進來的event儲存在postback.data中再利用parse_qsl解析data中的資料然後轉換成dict
+    data = dict(parse_qsl(event.postback.data))
+    #建立好def service_event(event) function後要來這裡加上判斷式
+    #直接呼叫service_event(event)
+    # if data.get('action') == 'service':
+    #     service_event(event)
+    if data.get('action') == 'service':
+        service_event(event)
+    
+
 
 # 解封鎖
 @handler.add(FollowEvent)
