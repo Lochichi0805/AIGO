@@ -178,7 +178,7 @@ def service_event(event):
             bubbles.append(bubble)
 
     flex_message = FlexSendMessage(
-        alt_text='請選擇想預定的項目',
+        alt_text='請選擇想預訂的項目',
         contents={
           "type": "carousel",
           "contents": bubbles

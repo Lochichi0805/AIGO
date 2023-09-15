@@ -38,7 +38,7 @@ def handle_message(event):
     elif message_text == "@營業據點":
         location_event(event)
 
-    elif message_text == '@預約服務':
+    elif message_text == '@預訂服務':
         service_category_event(event)
 
 
