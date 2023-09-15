@@ -26,7 +26,7 @@ def about_us_event(event):
 
 歡迎使用更多功能了解更多資訊，謝謝！ 
                                    
-《未滿18歲禁止購買菸酒類商品》''')
+《未滿18歲禁止購買菸酒類商品》''', emojis=emoji)
 
     # 貼圖回覆
     sticker_message = StickerSendMessage(
