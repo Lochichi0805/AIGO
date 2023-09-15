@@ -7,7 +7,8 @@ from linebot.exceptions import(
     InvalidSignatureError
 )
 from linebot.models import(
-    MessageEvent,TextMessage,TextSendMessage,FollowEvent,UnfollowEvent,StickerSendMessage,ImageSendMessage,LocationSendMessage
+    MessageEvent,TextMessage,TextSendMessage,FollowEvent,UnfollowEvent,StickerSendMessage,ImageSendMessage,LocationSendMessage,
+    FlexSendMessage,TemplateSendMessage,ImageCarouselTemplate,ImageCarouselColumn,PostbackAction
 )
 
 # 連線Line bot API(通關密語xD)
