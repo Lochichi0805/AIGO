@@ -6,27 +6,47 @@ def about_us_event(event):
     emoji = [
         {
             "index": 0,
-            "productId": "5ac21184040ab15980c9b43a",
-            "emojiId": "225"
+            "productId": "5ac1de17040ab15980c9b438",
+            "emojiId": "074"
         },
         {
-            "index": 7,
-            "productId": "5ac21184040ab15980c9b43a",
-            "emojiId": "225"
+            "index": 1,
+            "productId": "5ac1de17040ab15980c9b438",
+            "emojiId": "066"
+        },
+        {
+            "index": 8,
+            "productId": "5ac1de17040ab15980c9b438",
+            "emojiId": "070"
+        },
+        {
+            "index": 9,
+            "productId": "5ac1de17040ab15980c9b438",
+            "emojiId": "075"
+        },
+        {
+            "index": 90,
+            "productId": "5ac21a18040ab15980c9b43e",
+            "emojiId": "048"
+        },
+        {
+            "index": 94,
+            "productId": "5ac21a18040ab15980c9b43e",
+            "emojiId": "046"
         }
     ]
 
     # 文字回覆
-    text_message = TextSendMessage(text ='''$ 鳳翊洋行 $
+    text_message = TextSendMessage(text ='''$$ 鳳翊洋行 $$
 歡迎使用鳳翊洋行官方聊天機器人
-                                   
+
 本店販售各式菸酒，威士忌、紅酒、高粱、清酒、啤酒等。
-                                                                                             
+
 營業時間皆有提供外送服務及全台宅配服務。
 
-歡迎使用更多功能了解更多資訊，謝謝！ 
-                                   
-《未滿18歲禁止購買菸酒類商品》''', emojis=emoji)
+歡迎使用更多功能了解更多資訊，謝謝！
+
+$《未滿$歲禁止購買菸酒類商品》''', emojis=emoji)
 
     # 貼圖回覆
     sticker_message = StickerSendMessage(
