@@ -49,7 +49,7 @@ services = {
 #PostbackAction當用戶點擊時就會傳資料給我們
 def service_category_event(event):
     image_carousel_template_message = TemplateSendMessage(
-        alt_text='請選擇想服務類別',
+        alt_text='請選擇使用場合',
         template=ImageCarouselTemplate(
             columns=[
                 ImageCarouselColumn(
@@ -63,7 +63,7 @@ def service_category_event(event):
                 ImageCarouselColumn(
                     image_url='https://imgur.com/gLoo0k7',
                     action=PostbackAction(
-                        label='',
+                        label='大型活動',
                         display_text='想預定大型活動用酒',
                         data='action=service&category=大型活動'
                     )
