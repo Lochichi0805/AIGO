@@ -37,5 +37,24 @@ def handle_message(event):
     elif message_text == "@營業據點":
         location_event(event)
 
+# 解封鎖
+@handler.add(FollowEvent)
+def handle_follow(event):
+    welcome_msg = """Hello! 您好，歡迎您成為 鳳翊洋行 的好友！
+
+我是鳳翊洋行的小幫手~
+
+想了解更多可以點選下方選單查看更多功能喔！
+
+期待您的光臨！"""
+
+# 封鎖
+@handler.add(UnfollowEvent)
+def handle_unfollow(event):
+    print(event)
+
 if __name__ == "__main__":
     app.run()
+
+
+

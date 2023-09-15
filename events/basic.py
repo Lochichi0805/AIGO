@@ -13,21 +13,11 @@ def about_us_event(event):
             "index": 7,
             "productId": "5ac21184040ab15980c9b43a",
             "emojiId": "225"
-        },
-        {
-            "index": 88,
-            "productId": "5ac21184040ab15980c9b43a",
-            "emojiId": "225"
-        },
-        {
-            "index": 104,
-            "productId": "5ac21184040ab15980c9b43a",
-            "emojiId": "225"
         }
     ]
 
     # 文字回覆
-    text_message = TextSendMessage(text ='''鳳翊洋行
+    text_message = TextSendMessage(text ='''$ 鳳翊洋行 $
 歡迎使用鳳翊洋行官方聊天機器人
                                    
 本店販售各式菸酒，威士忌、紅酒、高粱、清酒、啤酒等。
