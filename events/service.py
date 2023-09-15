@@ -53,7 +53,7 @@ def service_category_event(event):
         template=ImageCarouselTemplate(
             columns=[
                 ImageCarouselColumn(
-                    image_url='https://imgur.com/4oa2gSl',
+                    image_url='https://i.imgur.com/4oa2gSl.jpg',
                     action=PostbackAction(
                         label='婚禮',
                         display_text='想預定婚禮用酒',
@@ -61,7 +61,7 @@ def service_category_event(event):
                     )
                 ),
                 ImageCarouselColumn(
-                    image_url='https://imgur.com/gLoo0k7',
+                    image_url='https://i.imgur.com/gLoo0k7.jpg',
                     action=PostbackAction(
                         label='大型活動',
                         display_text='想預定大型活動用酒',
@@ -159,7 +159,7 @@ def service_event(event):
                       "type": "postback",
                       "label": "預約",
                       "data": f"action=select_date&service_id={service_id}",
-                      "displayText": f"我想預約【{service['title']} {service['duration']}】"
+                      "displayText": f"我想預訂【{service['title']} {service['duration']}】"
                     },
                     "color": "#b28530"
                   },
