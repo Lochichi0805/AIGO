@@ -50,34 +50,40 @@ def callback():
 
     return 'OK'
 
-@handler.add(MessageEvent,message=TextMessage)
+
+@handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+
     message_text = str(event.message.text).lower()
     user = User.query.filter(User.line_id == event.source.user_id).first()#取得user的第一筆資料
-    #如果沒有user資料時，才會透過api去取得
+    #如果沒有user的資料時,才會透過api去取得
     if not user:
-
-        profile = line_bot_api.get_profile(event.source.user_id)#Line API 中說明get_profile可以取得的資料
+        profile = line_bot_api.get_profile(event.source.user_id)#line API中說明get_profile可以取得的資料
         print(profile.display_name)
-        print(profile.user_id)#相同的好以會因為不同的profile 而有不同的user_id
+        print(profile.user_id)#相同的好友會因為不同的profile而有不同的user_id
+        print(profile.picture_url)
 
         user = User(profile.user_id, profile.display_name, profile.picture_url)
         db.session.add(user)
         db.session.commit()
 
+    
     print(user.id)
     print(user.line_id)
     print(user.display_name)
 
     cart = Cart(user_id=event.source.user_id)
 
-    if message_text == '@關於我們':
+    if message_text == "@關於我們":
         about_us_event(event)
+
     elif message_text == "@營業據點":
         location_event(event)
-    elif message_text =='@最新消息':
+
+    elif message_text == "@最新消息":
         News_event(event)
-    elif message_text =='@預約服務':
+
+    elif message_text =="@預約服務":
         service_category_event(event)
 
     elif message_text.startswith('*'):
