@@ -76,7 +76,7 @@ def handle_message(event):
     #管理者的line id可以去資料庫中取U1c2b304c3f1dcbcd22008a3d0ff6b785
     #開頭是*代表是管理者     
     elif message_text.startswith('*'):
-        if event.source.user_id not in ['U39ab93491e932956dd03b1ec4cc6bca3']:
+        if event.source.user_id not in ['U72a5bfd4648cece9e05d94fd3227bc8f']:
             return
         if message_text in ['*data', '*d']:
             list_reservation_event(event)
