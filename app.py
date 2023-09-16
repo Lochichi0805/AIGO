@@ -105,16 +105,15 @@ def handle_message(event):
         else:
             message = TextSendMessage(text='您的購物並沒有任何商品！')
     elif message_text == '清空購物車':
-
         cart.reset()
-
         message = TextSendMessage(text='您的購物車已清空.')
     
 
     if message:
         line_bot_api.reply_message(
-        event.reply_token,
-        message) 
+            event.reply_token,
+            message
+        )
 
         
 
