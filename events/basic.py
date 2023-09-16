@@ -70,9 +70,16 @@ def location_event(event):
 
 
 # @最新消息
-def News(event):
+def News_event(event):
     about_us_img = " https://i.imgur.com/sf1XcDT.png"
+    # 圖片回覆
     image_message = ImageSendMessage(
         original_content_url = about_us_img,
         preview_image_url = about_us_img
+    )
+
+    # 當 USER 有反應時，觸發設定之回覆給使用者
+    line_bot_api.reply_message(
+        event.reply_token,
+        [image_message]
     )
