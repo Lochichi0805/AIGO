@@ -1,142 +1,273 @@
-# requirements製作 pip freeze > requirements.txt
-# 在heroku上建立資料表 heroku run flask db upgrade,接著到pgAdmin中Register一個server (輸入Heroku PostgreSQL),然後到connection
-# 接著要去連線,然後找到
-from flask import Flask, request, abort
-#可以將字串轉換成字典 action = service&category = 按摩調理>>{'action':'service','category':'按摩調理'}
+from flask import Flask,request,abort
+from database import db_session, init_db
+from extensions import db, migrate
+from events.service import *
+from events.basic import *
+from events.admin import *
+from linebot.models import *
+from line_bot_api import *
+from config import Config
+from models.cart import *
+from models.user import User    
+from models.product import Products
+
+from models.item import Items
+from models.order import Orders
+from models.linepay import LinePay
+
 from urllib.parse import parse_qsl
 
-from events.basic import *
-from events.service import *
-from line_bot_api import *
-from events.admin import *
-from extensions import db, migrate
-from models.user import User
 import os
-
+import uuid
 app = Flask(__name__)
-
+#admin: !QAZ2wsx資料庫的帳號和密碼
+#讓程式自己去判斷如果是測試端就會使用APP_SETTINGS
 app.config.from_object(os.environ.get('APP_SETTINGS', 'config.DevConfig'))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:1piAdFNkOc5vdyRJUIisLzhptVhsbGJV@dpg-ck2i15eru70s7382cdtg-a.singapore-postgres.render.com/aigo_t3fs'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:umzbQfh2wm5m4ZQaJtZSsyOaoV1z7Wbc@dpg-ck2jvsr6fquc73dcsl1g-a.singapore-postgres.render.com/aigodb_m9m0'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.app = app
+db.app = app 
 db.init_app(app)
 migrate.init_app(app, db)
 
 
-# callback ： 串接手機及程式
-@app.route("/callback", methods=['POST'])  # GET ：執行網頁時，參數會直接放在網址端
-def callback():                            # POST：較有隱私，傳送參數不會放在網址端，網頁轉跳網址不變
+#callback
+
+@app.route("/callback", methods=['POST'])
+def callback():
     # get X-Line-Signature header value
-    signature = request.headers["X-Line_Signature"]
+    signature = request.headers['X-Line-Signature']
 
     # get request body as text
-    body = request.get_data(as_text = True)
+    body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
     # handle webhook body
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        print("Invalid signature. Pleas check your channel access token/channel secret.")
+        print("Invalid signature. Please check your channel access token/channel secret.")
         abort(400)
 
-    return "OK"
+    return 'OK'
 
-# HandleMessage：啟動後，觸發事件用
-@handler.add(MessageEvent, message=TextMessage)
+@handler.add(MessageEvent,message=TextMessage)
 def handle_message(event):
-    # 把使用者輸入的英文轉成小寫存入變數meesage_text
     message_text = str(event.message.text).lower()
     user = User.query.filter(User.line_id == event.source.user_id).first()#取得user的第一筆資料
-    #如果沒有user的資料時,才會透過api去取得
+    #如果沒有user資料時，才會透過api去取得
     if not user:
-        profile = line_bot_api.get_profile(event.source.user_id)#line API中說明get_profile可以取得的資料
+
+        profile = line_bot_api.get_profile(event.source.user_id)#Line API 中說明get_profile可以取得的資料
         print(profile.display_name)
-        print(profile.user_id)#相同的好友會因為不同的profile而有不同的user_id
-        print(profile.picture_url)
+        print(profile.user_id)#相同的好以會因為不同的profile 而有不同的user_id
 
         user = User(profile.user_id, profile.display_name, profile.picture_url)
         db.session.add(user)
         db.session.commit()
 
-    
     print(user.id)
     print(user.line_id)
     print(user.display_name)
-    
 
-    if message_text == "@關於我們":
+    cart = Cart(user_id=event.source.user_id)
+
+    if message_text == '@關於我們':
         about_us_event(event)
-
-    elif message_text == "@營業據點":
-        location_event(event)
-
-    elif message_text == '@預訂服務':
+    elif message_text =='@預約服務':
         service_category_event(event)
-    #管理者的line id可以去資料庫中取U1c2b304c3f1dcbcd22008a3d0ff6b785
-    #開頭是*代表是管理者     
+
     elif message_text.startswith('*'):
-        if event.source.user_id not in ['U72a5bfd4648cece9e05d94fd3227bc8f']:
+        if event.source.user_id not in ['']:
             return
         if message_text in ['*data', '*d']:
             list_reservation_event(event)
-        elif message_text in ['*group', '*g']:
-            create_audience_group(event)
+
+    elif message_text in ['我想訂購商品','add']:
+        message=Products.list_all(event)
+
+    elif "請輸入購買數量" in message_text:
+        message = cart.ordering(event)
+    
+    elif message_text in ['@購物車','my cart', 'cart', "查看購物車"]:#當出現'my cart', 'cart', "that's it"時
+
+        if cart.bucket():#當購物車裡面有東西時
+            message = cart.display()#就會使用 display()顯示購物車內容
+        else:
+            message = TextSendMessage(text='您的購物並沒有任何商品！')
+    elif message_text == '清空購物車':
+
+        cart.reset()
+
+        message = TextSendMessage(text='您的購物車已清空.')
+    
+
+    if message:
+        line_bot_api.reply_message(
+        event.reply_token,
+        message) 
+
+        
+
 
 #接收postback的訊息
 #parse_qsl解析data中的資料
 @handler.add(PostbackEvent)
 def handle_postback(event):
-    #把傳進來的event儲存在postback.data中再利用parse_qsl解析data中的資料然後轉換成dict
+    #把傳進來的event儲存在postback.data中再利用parse_qsl解析data中的資料然漚轉換成dict
     data = dict(parse_qsl(event.postback.data))
     #建立好def service_event(event) function後要來這裡加上判斷式
     #直接呼叫service_event(event)
-    # if data.get('action') == 'service':
-    #     service_event(event)
+
     if data.get('action') == 'service':
         service_event(event)
     elif data.get('action') == 'select_date':
         service_select_date_event(event)
     elif data.get('action') == 'select_time':
-        service_select_time_event(event)    
+        service_select_time_event(event)
     elif data.get('action') == 'confirm':
         service_confirm_event(event)
     elif data.get('action') == 'confirmed':
         service_confirmed_event(event)
-    elif data.get('action') == 're_select':
-        service_select_date_event(event)
     elif data.get('action') == 'cancel':
         service_cancel_event(event)
-    #用get()來取得data中的資料,好處是如果沒有data時會顯示None,而不會出現錯誤
-    # print('action:', data.get('action'))
-    # print('category:', data.get('category'))
-    # print('service_id:', data.get('service_id'))
+    elif data.get('action') == 'checkout':
 
-    print('action:', data.get('action'))
-    print('category:', data.get('category'))
-    print('service_id:', data.get('service_id'))
-    print('date:', data.get('date'))
-    print('time:', data.get('time'))
+        user_id = event.source.user_id#取得user_id
 
+        cart = Cart(user_id=user_id)#透過user_id取得購物車
 
-# 解封鎖
+        if not cart.bucket():#判斷購物車裡面有沒有資料，沒有就回傳購物車是空的
+            message = TextSendMessage(text='您的購物車並沒有任何商品！')
+
+            line_bot_api.reply_message(event.reply_token, [message])
+
+            return 'OK'
+
+        order_id = uuid.uuid4().hex#如果有訂單的話就會使用uuid的套件來建立，因為它可以建立獨一無二的值
+
+        total = 0 #總金額
+        items = [] #暫存訂單項目
+
+        for product_name, num in cart.bucket().items():#透過迴圈把項目轉成訂單項目物件
+            #透過產品名稱搜尋產品是不是存在
+            product = db_session.query(Products).filter(Products.name.ilike(product_name)).first()
+            #接著產生訂單項目的物件
+            item = Items(product_id=product.id,
+                         product_name=product.name,
+                         product_price=product.price,
+                         order_id=order_id,
+                         quantity=num)
+
+            items.append(item)
+
+            total += product.price * int(num)#訂單價格 * 訂購數量
+        #訂單項目物件都建立後就會清空購物車
+        cart.reset()
+        #建立LinePay的物件
+        line_pay = LinePay()
+        #再使用line_pay.pay的方法，最後就會回覆像postman的格式
+        info = line_pay.pay(product_name='LSTORE',
+                            amount=total,
+                            order_id=order_id,
+                            product_image_url=Config.STORE_IMAGE_URL)
+        #取得付款連結和transactionId後
+        pay_web_url = info['paymentUrl']['web']
+        transaction_id = info['transactionId']
+        #接著就會產生訂單
+        order = Orders(id=order_id,
+                       transaction_id=transaction_id,
+                       is_pay=False,
+                       amount=total,
+                       user_id=user_id)
+        #接著把訂單和訂單項目加入資料庫中
+        db_session.add(order)
+
+        for item in items:
+            db_session.add(item)
+
+        db_session.commit()
+        #最後告知用戶並提醒付款
+        message = TemplateSendMessage(
+            alt_text='Thank you, please go ahead to the payment.',
+            template=ButtonsTemplate(
+                text='Thank you, please go ahead to the payment.',
+                actions=[
+                    URIAction(label='Pay NT${}'.format(order.amount),
+                              uri=pay_web_url)
+                ]))
+
+        line_bot_api.reply_message(event.reply_token, [message])
+
+    return 'OK'
+
+    #用get()來取得data中的資料，好處是如果備有data時會顯示None，而不會出線錯物
+@app.route("/confirm")
+def confirm():
+    transaction_id = request.args.get('transactionId')
+    order = db_session.query(Orders).filter(Orders.transaction_id == transaction_id).first()
+
+    if order:
+        line_pay = LinePay()
+        line_pay.confirm(transaction_id=transaction_id, amount=order.amount)
+
+        order.is_pay = True#確認收款無誤時就會改成已付款
+        db_session.commit()
+        
+        #傳收據給用戶
+        message = order.display_receipt()
+        line_bot_api.push_message(to=order.user_id, messages=message)
+
+        return '<h1>Your payment is successful. thanks for your purchase.</h1>'
+
+################## 解除封鎖 ####################
 @handler.add(FollowEvent)
 def handle_follow(event):
     welcome_msg = """Hello! 您好，歡迎您成為 鳳翊洋行 的好友！
 
-我是鳳翊洋行的小幫手~
+-我是鳳翊洋行的小幫手~
 
-想了解更多可以點選下方選單查看更多功能喔！
+-想了解更多可以點選下方選單查看更多功能喔！
 
-期待您的光臨！"""
+-期待您的光臨！"""
 
-# 封鎖
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=welcome_msg))
+
+
+################## 顯示封鎖 ####################
 @handler.add(UnfollowEvent)
 def handle_unfollow(event):
     print(event)
 
-if __name__ == "__main__":
+
+
+#初始化產品資訊
+@app.before_first_request
+def init_products():
+    # init db
+    result = init_db()#先判斷資料庫有沒有建立，如果還沒建立就會進行下面的動作初始化產品
+    if result:
+        init_data = [Products(name='威士忌',
+                              product_image_url='https://i.imgur.com/snyGO0G.jpg',
+                              price=99999,
+                              description='威士忌是一種充滿歷史和文化的烈酒，具有豐富的風味和多樣性，象徵著品味和品質的飲品。'),
+                     Products(name='紅酒',
+                              product_image_url='https://i.imgur.com/BvonVPh.jpg',
+                              price=99999,
+                              description='紅酒，那深深的故事，將每一口都變成一段回憶，而每一次品嚐都是一種藝術。'),
+                     Products(name='香檳',
+                              price=99999,
+                              product_image_url='https://i.imgur.com/2w59MIm.jpg',
+                              description='香檳代表了葡萄酒的精華，它們擁有引人入勝的氣泡、多樣的風味和無盡的慶祝潛力。')]
+        db_session.bulk_save_objects(init_data)#透過這個方法一次儲存list中的產品
+        db_session.commit()#最後commit()才會存進資料庫
+        #記得要from models.product import Products在app.py
+        
+        
+
+
+
+if __name__ == '__main__':
+    init_products()
     app.run()
-
-
-
