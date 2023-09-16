@@ -73,6 +73,10 @@ def handle_message(event):
 
     if message_text == '@關於我們':
         about_us_event(event)
+    elif message_text == "@營業據點":
+        location_event(event)
+    elif message_text =='@最新消息':
+        News(event)
     elif message_text =='@預約服務':
         service_category_event(event)
 

@@ -67,8 +67,12 @@ def location_event(event):
         latitude = 22.604481,
         longitude = 120.34482
     )
-    
-    line_bot_api.reply_message(
-        event.reply_token,
-        location_message
+
+
+# @最新消息
+def News(event):
+    about_us_img = " https://i.imgur.com/sf1XcDT.png"
+    image_message = ImageSendMessage(
+        original_content_url = about_us_img,
+        preview_image_url = about_us_img
     )
